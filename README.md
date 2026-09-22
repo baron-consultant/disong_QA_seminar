@@ -6,7 +6,7 @@
 
 - [문서 검토 및 내용 정리](notes/content-review.md)
 - [발표 구성안](notes/storyboard.md)
-- [발표 초안](index.html)
+- [발표 초안](docs/index.html)
 
 ## 검토 기준
 
@@ -16,7 +16,7 @@
 
 ## 화면
 
-`index.html`을 브라우저에서 열면 됩니다. 외부 라이브러리 없이 동작합니다.
+`docs/index.html`을 브라우저에서 열면 됩니다. 외부 라이브러리 없이 동작합니다.
 
 - 최대 화면: 7680×2160, 32:9
 - 기본안: 발표 / 설명 도식 두 영역, 각각 16:9
@@ -33,4 +33,4 @@
 
 배포 시 사용할 주소: https://baron-consultant.github.io/disong_QA_seminar/
 
-Pages는 `main` 브랜치의 루트(`/`)를 게시하도록 설정합니다. 실제 배포 상태는 GitHub Pages 설정과 배포 결과로 확인해야 합니다.
+Pages는 `main` 브랜치의 `/docs`만 게시하도록 설정합니다. 이 폴더에는 발표 HTML과 `.nojekyll`만 있습니다. 검토 메모·스크립트·원본 문서는 게시 대상이 아닙니다. 실제 배포 상태는 GitHub Pages 설정과 배포 결과로 확인해야 합니다.

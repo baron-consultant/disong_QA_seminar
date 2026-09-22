@@ -61,7 +61,7 @@ def main():
         return 0
     pages = api('/repos/' + REPO + '/pages')
     if args.action == 'enable' and pages is None:
-        pages = api('/repos/' + REPO + '/pages', 'POST', {'source': {'branch': 'main', 'path': '/'}})
+        pages = api('/repos/' + REPO + '/pages', 'POST', {'source': {'branch': 'main', 'path': '/docs'}})
     print(json.dumps({k: pages.get(k) for k in ['html_url', 'status', 'source', 'build_type']} if pages else {'pages': 'not enabled'}, ensure_ascii=False))
     return 0
 
