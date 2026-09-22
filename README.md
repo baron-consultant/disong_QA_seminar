@@ -27,6 +27,8 @@
 현재 오른쪽은 문서 기반 설명 도식이며 실제 제품 스크린샷이 아닙니다.
 실제 제품 화면·발표자·발표 시간은 다음 편집에서 반영합니다.
 
+검증: Edge의 7680×2160 뷰포트에서 12장 × 2개 보기 모드의 영역 넘침과 키보드 이전·다음 이동 및 페이지 경계를 확인했습니다. 실제 제품 UI와 API는 이번 검증 대상이 아닙니다.
+
 ## GitHub Pages
 
 저장소: https://github.com/baron-consultant/disong_QA_seminar
@@ -34,3 +36,5 @@
 배포 시 사용할 주소: https://baron-consultant.github.io/disong_QA_seminar/
 
 Pages는 `main` 브랜치의 `/docs`만 게시하도록 설정합니다. 이 폴더에는 발표 HTML과 `.nojekyll`만 있습니다. 검토 메모·스크립트·원본 문서는 게시 대상이 아닙니다. 실제 배포 상태는 GitHub Pages 설정과 배포 결과로 확인해야 합니다.
+
+2026-09-22 확인: 저장소는 비공개이며, GitHub API가 현재 요금제에서 이 저장소의 Pages를 지원하지 않는다고 응답했습니다(HTTP 422). 저장소 업로드는 완료했으며 사이트는 아직 게시되지 않았습니다. 비공개 Pages를 지원하는 조직 요금제를 사용하거나, 발표 HTML만 담은 별도 공개 저장소를 사용할 수 있습니다. [GitHub Pages 지원 범위](https://docs.github.com/en/pages/getting-started-with-github-pages/creating-a-github-pages-site)
