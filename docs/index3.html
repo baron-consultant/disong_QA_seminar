@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="color-scheme" content="dark">
-  <title>흩어진 요청을 한곳으로 · 한 화면에 모으되, 권한은 넘지 않게</title>
+  <title>흩어진 요청을 한곳으로 · 작성페이지에서 서비스별 확장까지</title>
   <style>
     *{box-sizing:border-box}body{margin:0;background:#090d14;color:#edf2f7;font-family:"Pretendard","Malgun Gothic",sans-serif;overflow:hidden}
     button{font:inherit;cursor:pointer;color:inherit}button:focus-visible,a:focus-visible{outline:3px solid #a6f3c9;outline-offset:5px}
@@ -50,6 +50,8 @@
     .system-map .map-detail{font-size:29px;fill:#c4d1e0}.system-map .map-label{font-size:28px;fill:#a6efc8}
     .system-map .map-node{fill:#1b2a3d;stroke:#49617e;stroke-width:2}.system-map .map-hub{fill:#183c33;stroke:#7ce2ad;stroke-width:3}
     .system-map .map-link{fill:none;stroke:#85dcb0;stroke-width:3;marker-start:url(#map-arrow);marker-end:url(#map-arrow)}
+    .visual.has-art{justify-content:center;gap:0}.artwork-wrap{width:100%;height:480px;flex:none;display:flex;align-items:center;justify-content:center}.artwork{display:block;width:100%;height:100%;max-height:none;object-fit:contain;overflow:visible}.artwork text{font-family:"Pretendard","Malgun Gothic",sans-serif}.art-label{font-size:28px;fill:#aebdd1}.art-title{font-size:34px;font-weight:700;fill:#edf2f7}.art-small{font-size:23px;fill:#9eafc4}.art-micro{font-size:19px;fill:#95a9c1}.art-box{fill:#1b2a3d;stroke:#425873;stroke-width:2}.art-box-green{fill:#183c33;stroke:#7ce2ad;stroke-width:3}.art-line{fill:none;stroke:#88a6c8;stroke-width:4;stroke-linecap:round;stroke-linejoin:round}.art-line-green{fill:none;stroke:#80dfad;stroke-width:3;stroke-linecap:round;stroke-linejoin:round}.art-paper{fill:#25374d;stroke:#60758f;stroke-width:2}.art-dot{fill:#80dfad}.art-muted{fill:#536984}
+    #stage .points{display:none}#stage .narrative .footer{margin-top:auto}#stage.with-art .ref-label,#stage.with-art .ref-title,#stage.with-art .status{display:none}
     @media(max-width:650px){.toolbar{font-size:11px;gap:4px;padding:6px}.toolbar button{padding:8px}.toolbar span{padding:0 3px}.mode-hint{font-size:10px}}
     @media print{body{overflow:visible;background:white}#stage{position:static;transform:none!important;width:100%;height:auto;min-height:720px}.toolbar,.mode-hint{display:none}}
   
@@ -57,6 +59,21 @@
     .cover-screen{position:fixed;inset:0;z-index:10;display:flex;align-items:center;justify-content:center;padding:8vw;background:radial-gradient(ellipse at 82% 22%,#194735 0,transparent 31%),radial-gradient(ellipse at 8% 95%,#203454 0,transparent 36%),linear-gradient(135deg,#0a101a,#111d2a 64%,#0b141e)}
     .cover-screen:before{content:"";position:absolute;width:42vw;height:42vw;max-height:70vh;max-width:70vh;border:1px solid #5bd39244;border-radius:50%;right:10vw;top:9vh;box-shadow:0 0 0 4vw #5bd39208,0 0 0 9vw #5bd39205;pointer-events:none}
     .cover-content{position:relative;width:min(1800px,100%);z-index:1}.cover-kicker{color:#9bf0c0;font-size:clamp(16px,1.3vw,28px);letter-spacing:.15em;font-weight:700}.cover-title{font-size:clamp(46px,6vw,112px);line-height:1.18;letter-spacing:-.045em;max-width:1450px;margin:34px 0 20px;word-break:keep-all}.cover-subtitle{font-size:clamp(22px,2vw,40px);color:#c1cddd;margin:0 0 54px;word-break:keep-all}.cover-meta{display:flex;align-items:center;gap:22px;color:#a8b8cc;font-size:clamp(18px,1.5vw,30px)}.cover-meta:before{content:"";width:54px;height:2px;background:#77dfa6}.cover-start{display:inline-flex;align-items:center;gap:18px;margin-top:70px;border:1px solid #84e2ad;background:#17392f;color:#c8f7dc;padding:18px 28px;border-radius:999px;font-size:21px;font-weight:700}.cover-start:hover{background:#235741}
+    .cover-options{display:flex;flex-wrap:wrap;gap:12px;margin-top:25px}.cover-options .cover-start{margin-top:0;font-size:17px;padding:14px 20px}.cover-options .secondary{border-color:#53677e;background:#1a2636;color:#d4deeb}.cover-note{margin:14px 0 0;color:#92a3b9;font-size:15px}
+    #stage{position:absolute;top:50%;left:50%;width:1280px;height:720px;transform:translate(-50%,-50%) scale(1);transform-origin:center;grid-template-columns:minmax(0,1fr)}
+    #stage .narrative{min-width:0;padding:58px 72px;border:0;cursor:pointer}
+    body:not(.display-visual) #stage .reference{display:none}
+    body.display-visual #stage .narrative{display:none}
+    body.display-visual #stage .reference{display:flex;min-width:0;min-height:0;height:720px;padding:48px 64px;overflow:hidden;background:#0f1722}
+    body.display-visual #stage.diagram{display:flex;flex-direction:column;padding:38px 70px 30px;gap:18px}
+    body.display-visual #stage.diagram .narrative{display:none}
+    body.display-visual #stage.diagram .reference{display:flex;flex:1;min-height:0;padding:0;background:transparent}
+    body.display-visual #stage .ref-title{font-size:clamp(24px,2.1vw,38px)}
+    body.display-visual #stage .visual{min-width:0;min-height:0}
+    body.display-visual #stage .artwork-wrap{height:480px;max-height:68vh}
+    body.display-visual .toolbar,body.display-visual .mode-hint{display:none!important}
+    #stage .mode-hint{z-index:3}
+    @media(max-width:900px){.toolbar{max-width:calc(100vw - 20px);overflow-x:auto}}
   </style>
 </head>
 <body>
@@ -64,14 +81,17 @@
     <div class="cover-content">
       <div class="cover-kicker">Q&amp;A 통합 관리 플랫폼</div>
       <h1 class="cover-title">흩어진 요청을 한곳으로 :<br>Q&amp;A 통합 플랫폼 구축</h1>
-      <p class="cover-subtitle">한 화면에 모으되, 권한은 넘지 않게</p>
+      <p class="cover-subtitle">필요에서 시작해 확장까지 · 구축 과정에서 마주한 문제와 선택</p>
       <div class="cover-meta">송대일 선임연구원</div>
-      <button class="cover-start" id="cover-start">발표 시작 →</button>
+      <div class="cover-options" id="dual-options">
+        <button class="cover-start" id="cover-start">발표 시작 →</button>
+      </div>
+      <p class="cover-note" id="cover-note">현재 창에는 발표 글만 표시 · 글을 클릭하면 별도 참고 화면 열기/갱신</p>
     </div>
   </section>
-  <div class="mode-hint" hidden>흩어진 요청을 한곳으로 · 송대일 선임연구원</div>
+  <div class="mode-hint" hidden>텍스트를 클릭하면 참고 화면 갱신</div>
   <main id="stage" aria-label="세미나 슬라이드" hidden>
-    <section class="narrative">
+    <section class="narrative" title="클릭하면 현재 슬라이드의 오른쪽 참고 화면을 표시">
       <div class="eyebrow">Q&A 통합 관리 플랫폼</div>
       <div class="kicker" id="chapter"></div>
       <h1 id="title"></h1>
@@ -91,156 +111,307 @@
     <button id="prev" aria-label="이전 슬라이드">←</button>
     <span id="counter"></span>
     <button id="next" aria-label="다음 슬라이드">→</button>
-    <button id="mode" aria-pressed="false">전체 폭 · S</button>
-    <button id="fullscreen">전체 화면 · F</button>
+      <button id="fullscreen">전체 화면 · F</button>
   </nav>
   <div id="announce" class="sr-only" aria-live="polite"></div>
   <script>
     const slides = [
   {
-    "chapter": "기 · 만들면서 발견한 문제",
-    "title": "관리 화면을 하나로 합치면\n모두 다 보여도 될까요?",
-    "lead": "관리자는 여러 프로젝트 일을 한눈에 보고 싶지만\n각 담당자는 맡은 프로젝트만 볼 수 있어야 했습니다.",
-    "ref": "한 화면의 편리함과 프로젝트별 권한",
+    "chapter": "기 · 문의가 흩어져 있던 때",
+    "title": "여러 문의 창구,\n한곳에서 이어지는 관리",
+    "lead": "접수는 여러 서비스에서, 담당 확인·답변·개발 요청은 한 관리 공간에서",
+    "ref": "작성은 각 서비스에서, 관리는 한곳에서",
     "cards": [
       [
-        "현업 요구",
-        "여러 프로젝트의 남은 일을 한곳에서"
+        "Q&A 작성페이지",
+        "사용자가 질문·요청을 남기는 창구"
       ],
       [
-        "권한 원칙",
-        "담당자는 맡은 프로젝트만"
-      ],
-      [
-        "위험",
-        "화면을 합치며 다른 부서 문의까지 노출",
+        "통합 관리페이지",
+        "담당자가 문의와 처리 상황을 확인",
         "accent"
+      ],
+      [
+        "해결 작업",
+        "개발이 필요한 내용은 관련 작업과 연결"
       ]
     ],
     "points": [
-      "통합해서 보기",
-      "권한 범위 유지",
-      "기존 업무 방식 보존"
+      "서비스별 접수 창구",
+      "담당자·답변 기록",
+      "처리·개발 요청 연결"
     ],
+    "art": "platform",
     "status": "",
-    "source": "Q&A 통합 플랫폼 작업 문서"
+    "source": "Q&A 플랫폼 구축 과정 · 설명 자료"
   },
   {
-    "chapter": "기 · 구조 선택",
-    "title": "새 권한 체계를 만들면 일이 더 커집니다",
-    "lead": "통합 화면을 위해 프로젝트 묶음을 새로 만들면\n기존 담당자와 권한 정보를 다시 옮겨야 했습니다.",
-    "ref": "기존의 담당 관계를 활용할까?",
+    "chapter": "승 · 계획 밖의 빈칸",
+    "title": "작성 화면만으로 해결되지 않는 운영 문제",
+    "lead": "질문을 남길 화면은 구상했지만,\n누가 분류하고 답할지 관리 기준은 미정",
+    "ref": "처음 구상과 새로 드러난 질문",
     "cards": [
       [
-        "새 체계 추가",
-        "새로운 관리 단위와 설정이 필요"
+        "처음 구상",
+        "홈페이지 Q&A 작성 화면"
       ],
       [
-        "기존 기준 활용",
-        "이미 등록된 프로젝트 담당 관계를 재사용",
+        "비어 있던 운영",
+        "담당자 지정·처리 상태·답변 관리"
+      ],
+      [
+        "다음 고민",
+        "접수 후 업무 흐름의 설계",
         "accent"
-      ],
-      [
-        "고려한 점",
-        "새 기능과 기존 화면의 연결도 유지"
       ]
     ],
     "points": [
-      "새 설정의 관리 부담",
-      "기존 권한의 재사용",
-      "화면 간 일관성"
+      "작성 화면 중심",
+      "관리 기준 부재",
+      "접수 뒤 처리 흐름 필요"
     ],
     "status": "",
-    "source": "Q&A 통합 플랫폼 작업 문서"
+    "source": "Q&A 플랫폼 구축 과정 · 설명 자료"
   },
   {
-    "chapter": "승 · 해결 방향",
-    "title": "볼 수 있는 프로젝트만 한곳에 모으기",
-    "lead": "여러 프로젝트의 일은 통합 화면에 모으되\n누가 볼 수 있는지는 기존 담당 권한을 따르도록 했습니다.",
-    "ref": "통합 조회와 권한 확인을 함께",
+    "chapter": "승 · 접수 다음 단계를 설계",
+    "title": "관리 화면을 더해 운영의 빈칸을 보완",
+    "lead": "문의 목록·담당 배정·답변·개발 진행을 관리할 필요",
+    "ref": "작성에서 처리 기록까지",
     "cards": [
       [
-        "일반 담당자",
-        "자신이 관리하는 프로젝트만"
+        "문제로 확인된 점",
+        "접수 뒤 확인·배정·답변의 분산"
       ],
       [
-        "전체 관리자",
-        "허용된 전체 프로젝트",
+        "선택한 방향",
+        "ABC UserFeedback 관리 화면 활용",
         "accent"
       ],
       [
-        "기존 화면",
-        "프로젝트별 작업 화면은 그대로 유지"
+        "연결한 흐름",
+        "같은 서버의 작성 화면과 관리 화면"
       ]
     ],
     "points": [
-      "한곳에서 처리",
-      "담당 범위 지키기",
-      "기존 화면과 연결"
+      "접수 이후 관리 문제",
+      "기존 관리 화면 활용",
+      "작성 화면 연결"
     ],
+    "art": "evolution",
     "status": "",
-    "source": "Q&A 통합 플랫폼 작업 문서"
+    "source": "Q&A 플랫폼 구축 과정 · 설명 자료"
   },
   {
-    "chapter": "전 · 놓치기 쉬운 점",
-    "title": "화면에서 숨기는 것만으론 부족했습니다",
-    "lead": "사용자가 다른 프로젝트 번호를 직접 요청해도\n자료를 볼 수 없도록 실제 조회 때 권한을 다시 확인하게 했습니다.",
-    "ref": "보여주기와 접근 허용은 따로 확인",
+    "chapter": "전 · 로그인 적용으로 설계 변화",
+    "title": "한 홈페이지에서 서비스별 작성창구로",
+    "lead": "통합 로그인을 적용하며 서비스별 진입과 안내 필요,\n작성창구는 분리하고 관리 흐름은 공통으로",
+    "ref": "창구는 서비스별, 관리는 공통으로",
     "cards": [
       [
-        "화면",
-        "담당 프로젝트만 목록에 표시"
+        "서비스별 작성창구",
+        "서비스에 맞는 질문과 안내"
       ],
       [
-        "자료 조회",
-        "요청마다 권한을 다시 확인",
+        "통합 로그인",
+        "로그인 후 서비스별 질문 작성"
+      ],
+      [
+        "공통 관리",
+        "접수된 문의는 같은 관리 흐름으로",
         "accent"
-      ],
-      [
-        "결과",
-        "권한 밖 자료는 통합 결과에서 제외 또는 거부"
       ]
     ],
     "points": [
-      "화면 표시",
-      "조회 시 재확인",
-      "프로젝트 경계 유지"
+      "서비스별 진입·안내",
+      "공통된 처리 흐름",
+      "새 서비스 추가 가능성"
     ],
+    "art": "service",
     "status": "",
-    "source": "Q&A 통합 플랫폼 작업 문서"
+    "source": "Q&A 플랫폼 구축 과정 · 설명 자료"
   },
   {
-    "chapter": "결 · 만들며 배운 기준",
-    "title": "편하게 모으고, 볼 범위는 그대로 지키기",
-    "lead": "통합 화면이 편리해도 기존 권한까지 넓히면 안 됩니다.\n기존 담당 기준을 유지하며 전역 작업공간을 만들었습니다.",
-    "ref": "이번 작업의 교훈",
+    "chapter": "전 · 진입점과 연결 방식 선택",
+    "title": "진입은 홈페이지에서, 작성은 서비스별 화면에서",
+    "lead": "기존 바론 홈페이지를 안내 창구로 활용,\n작성 화면은 별도로 두고 관리 화면과 연결",
+    "ref": "사용 편의와 확장 기준",
     "cards": [
       [
-        "업무는 모으기",
-        "여러 프로젝트 Todo를 한 화면에"
+        "홈페이지 진입",
+        "기존 바론 메뉴에서 Q&A로 이동"
       ],
       [
-        "권한은 유지하기",
-        "담당 프로젝트 범위 그대로",
+        "별도 작성 화면",
+        "서비스별 질문과 안내 제공",
         "accent"
       ],
       [
-        "확장은 단계적으로",
-        "필요가 확인될 때 새 관리 단위 추가"
+        "화면 간 연결",
+        "작성 내용을 관리 화면으로 전달"
       ]
     ],
     "points": [
-      "한눈에 보는 현황",
-      "프로젝트 권한 유지",
-      "기존 상세 화면 활용"
+      "익숙한 진입점",
+      "서비스별 화면",
+      "공통 관리 연결"
     ],
     "status": "",
-    "source": "Q&A 통합 플랫폼 작업 문서"
+    "source": "Q&A 플랫폼 구축 과정 · 설명 자료"
+  },
+  {
+    "chapter": "전 · 받는 사람별 안내",
+    "title": "알림 대상에 따라 채널을 분리",
+    "lead": "사내 담당자와 외부 작성자의 알림 목적 차이,\n수신자별 채널과 안내 내용 구분",
+    "ref": "내부 업무 알림과 작성자 안내",
+    "cards": [
+      [
+        "사내 담당자",
+        "새 문의·변경 알림 · 네이버웍스"
+      ],
+      [
+        "외부 작성자",
+        "접수·답변 안내 · 카카오 알림톡·문자"
+      ],
+      [
+        "분리 기준",
+        "내부 업무 대화와 외부 안내 구분",
+        "accent"
+      ]
+    ],
+    "points": [
+      "수신 대상 구분",
+      "채널 선택",
+      "안내 내용 구분"
+    ],
+    "status": "수신자·채널·안내 내용 기준 정리",
+    "source": "Q&A 플랫폼 구축 과정 · 설명 자료"
+  },
+  {
+    "chapter": "결 · 다음 업무를 잇기 전",
+    "title": "총무 신청마다 다른 정보와 처리 기준",
+    "lead": "물품·도서·차량별 필수 정보, 승인·담당 흐름의 차이",
+    "ref": "요청 종류별로 달라지는 입력 항목",
+    "cards": [
+      [
+        "필수 항목",
+        "요청 처리에 필요한 정보만 수집"
+      ],
+      [
+        "승인·담당",
+        "승인 여부와 처리 부서 지정"
+      ],
+      [
+        "처리·안내",
+        "접수부터 결과 전달까지의 단계",
+        "accent"
+      ]
+    ],
+    "points": [
+      "필수 입력 정보",
+      "승인자·처리 담당자",
+      "첨부·개인정보·알림 기준"
+    ],
+    "art": "forms",
+    "status": "함께 정할 기준: 첨부 자료 · 개인정보 · 알림 시점",
+    "source": "architecture_secretary.md · 인트라넷형 사내 지원 기능 / 승인·배정"
+  },
+  {
+    "chapter": "결 · 다음 업무로 확장",
+    "title": "총무·인트라넷 문의의 공통 관리",
+    "lead": "업무별 접수 창구와 입력 항목,\n한곳에서 보는 분류·담당·진행 상황",
+    "ref": "업무별 창구, 공통 관리 흐름",
+    "cards": [
+      [
+        "총무 문의",
+        "물품·도서·차량별 신청 양식"
+      ],
+      [
+        "인트라넷 문의",
+        "계정·권한·오류별 문의 양식"
+      ],
+      [
+        "공통 관리",
+        "문의 분류·담당자·진행 상태 확인",
+        "accent"
+      ]
+    ],
+    "points": [
+      "업무별 접수 창구",
+      "요청별 질문 항목",
+      "공통 처리 현황"
+    ],
+    "art": "integrate",
+    "status": "확장 전 기준: 담당 부서 · 열람 권한 · 문의 분류",
+    "source": "README.md · RP별 요청 창구 / architecture_secretary.md · 인트라넷형 사내 지원 기능"
+  },
+  {
+    "chapter": "결 · 도입 후 기대 변화",
+    "title": "흩어진 접수에서 한눈에 보는 처리 흐름으로",
+    "lead": "접수 현황·담당자·처리 상태의 한곳 확인,\n필요한 개발 이슈와의 연결",
+    "ref": "기존과 달라지는 점",
+    "cards": [
+      [
+        "도입 전",
+        "서비스별로 나뉜 문의 기록"
+      ],
+      [
+        "도입 후 기대",
+        "공통 관리 화면과 연결된 처리 흐름",
+        "accent"
+      ],
+      [
+        "확장 범위",
+        "총무·인트라넷 등 새 문의 창구"
+      ]
+    ],
+    "points": [
+      "문의 확인 경로 단순화",
+      "담당·진행 상황 가시화",
+      "새 업무 적용 기반"
+    ],
+    "art": "impact",
+    "status": "발표자 소감(구두): 시작 당시의 가정 · 가장 어려웠던 선택 · 배운 점 · 다음 확장",
+    "source": "Q&A 플랫폼 구축 과정 · 설명 자료"
   }
 ];
     const $=id=>document.getElementById(id);
+    const displayMode=new URLSearchParams(location.search).get('display');
+    if(displayMode==='visual')document.body.classList.add('display-visual');
     let page=Math.max(0,Math.min(slides.length-1,(parseInt(location.hash.slice(1),10)||1)-1));
-    let wide=false;
+    let visualWindow=null;
+    const artwork={
+      platform:`<svg class="artwork" viewBox="0 0 1200 500" role="img" aria-label="EGBIM, TOVA, GAIA 각각의 Q&amp;A 작성페이지를 관리페이지에서 통합 관리하고 담당자 댓글 또는 개발 이슈 연결로 처리하는 흐름">
+        <defs><marker id="small-arrow" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto"><path d="M1 1 5 3 1 5" fill="none" stroke="#80dfad" stroke-width="1.2"/></marker></defs>
+        <text x="25" y="53" class="art-label">서비스별 작성페이지</text>
+        <rect x="25" y="78" width="280" height="67" rx="14" class="art-box"/><circle cx="54" cy="111" r="8" class="art-dot"/><text x="80" y="119" class="art-title">EGBIM Q&amp;A</text>
+        <rect x="25" y="159" width="280" height="67" rx="14" class="art-box"/><circle cx="54" cy="192" r="8" fill="#83a8d0"/><text x="80" y="200" class="art-title">TOVA Q&amp;A</text>
+        <rect x="25" y="240" width="280" height="67" rx="14" class="art-box"/><circle cx="54" cy="273" r="8" fill="#e0bd7d"/><text x="80" y="281" class="art-title">GAIA Q&amp;A</text>
+        <rect x="25" y="321" width="280" height="52" rx="12" fill="none" stroke="#51657f" stroke-width="2" stroke-dasharray="7 7"/><text x="55" y="356" class="art-title">⋮</text><text x="91" y="354" class="art-small">다른 서비스 추가</text>
+        <path d="M315 111H355M315 192H355M315 273H355M315 347H355M355 111V347" class="art-line"/>
+        <path d="M355 228H400" class="art-line-green" marker-end="url(#small-arrow)"/>
+        <rect x="415" y="88" width="330" height="280" rx="20" class="art-box-green"/><text x="580" y="130" text-anchor="middle" class="art-title">통합 관리페이지</text>
+        <text x="450" y="163" class="art-micro">문의</text><text x="565" y="163" class="art-micro">담당자</text><text x="675" y="163" class="art-micro">상태</text>
+        <rect x="440" y="177" width="280" height="48" rx="9" fill="#102b25"/><path d="M460 196h82m-82 12h55" class="art-line"/><circle cx="692" cy="201" r="7" class="art-dot"/>
+        <rect x="440" y="234" width="280" height="48" rx="9" fill="#102b25"/><path d="M460 253h82m-82 12h55" class="art-line"/><circle cx="692" cy="258" r="7" fill="#83a8d0"/>
+        <rect x="440" y="291" width="280" height="48" rx="9" fill="#102b25"/><path d="M460 310h82m-82 12h55" class="art-line"/><circle cx="692" cy="315" r="7" fill="#e0bd7d"/>
+        <path d="M760 228H800M800 228V157M800 228V342" class="art-line"/>
+        <path d="M800 157H840M800 342H840" class="art-line-green" marker-end="url(#small-arrow)"/>
+        <rect x="850" y="83" width="325" height="145" rx="18" class="art-box"/><text x="1012" y="119" text-anchor="middle" class="art-title">피드백 댓글 처리</text>
+        <circle cx="935" cy="161" r="23" fill="#30445d"/><path d="M925 158h20m-16 8h12" stroke="#d1dceb" stroke-width="3" stroke-linecap="round"/><path d="M970 161H1044" class="art-line-green" marker-end="url(#small-arrow)"/><circle cx="1075" cy="161" r="23" fill="#193831" stroke="#7ce2ad" stroke-width="2"/><path d="M1065 158h20m-16 8h12" stroke="#a6f3c9" stroke-width="3" stroke-linecap="round"/><text x="935" y="205" text-anchor="middle" class="art-micro">담당자</text><text x="1075" y="205" text-anchor="middle" class="art-micro">요청자</text>
+        <rect x="850" y="266" width="325" height="166" rx="18" class="art-box"/><text x="1012" y="302" text-anchor="middle" class="art-title">개발 이슈 연결</text>
+        <rect x="875" y="320" width="100" height="43" rx="10" class="art-paper"/><text x="925" y="349" text-anchor="middle" class="art-small">Q&amp;A</text><path d="M985 341H1025" class="art-line-green" marker-end="url(#small-arrow)"/><rect x="1040" y="320" width="110" height="43" rx="10" fill="#193831" stroke="#72d6a2" stroke-width="2"/><text x="1095" y="349" text-anchor="middle" class="art-small">개발 작업</text>
+        <text x="1012" y="397" text-anchor="middle" class="art-micro">담당자 ↔ 개발자 소통</text><text x="1012" y="420" text-anchor="middle" class="art-micro">해결 후 Q&amp;A 답변</text>
+      </svg>`,
+
+
+      evolution:`<svg class="artwork" viewBox="0 0 1200 500" role="img" aria-label="질문 작성 화면에서 관리페이지를 추가하고 서비스별 Q&A로 확장한 흐름"><defs><marker id="mini-arrow" markerWidth="12" markerHeight="12" refX="9" refY="6" orient="auto"><path d="M2 2 10 6 2 10" fill="none" stroke="#80dfad" stroke-width="2"/></marker></defs><rect x="35" y="95" width="310" height="290" rx="22" class="art-box"/><text x="190" y="145" text-anchor="middle" class="art-label">처음</text><rect x="95" y="175" width="190" height="125" rx="13" class="art-paper"/><path d="M122 208h136m-136 29h136m-136 29h85" class="art-line"/><text x="190" y="348" text-anchor="middle" class="art-title">작성화면</text><path d="M365 240h72" class="art-line-green" marker-end="url(#mini-arrow)"/><rect x="455" y="95" width="310" height="290" rx="22" class="art-box-green"/><text x="610" y="145" text-anchor="middle" class="art-label">필요해진 것</text><rect x="505" y="175" width="210" height="125" rx="13" fill="#102b25"/><path d="M530 205h160m-160 33h160m-160 33h160" stroke="#466a56" stroke-width="3"/><circle cx="545" cy="205" r="6" class="art-dot"/><circle cx="545" cy="238" r="6" fill="#83a8d0"/><circle cx="545" cy="271" r="6" fill="#e0bd7d"/><text x="610" y="348" text-anchor="middle" class="art-title">관리페이지</text><path d="M785 240h72" class="art-line-green" marker-end="url(#mini-arrow)"/><rect x="875" y="95" width="290" height="290" rx="22" class="art-box"/><text x="1020" y="145" text-anchor="middle" class="art-label">확장</text><rect x="920" y="170" width="200" height="47" rx="11" class="art-paper"/><text x="1020" y="201" text-anchor="middle" class="art-small">EGBIM · Q&amp;A</text><rect x="920" y="230" width="200" height="47" rx="11" class="art-paper"/><text x="1020" y="261" text-anchor="middle" class="art-small">TOVA · Q&amp;A</text><rect x="920" y="290" width="200" height="47" rx="11" class="art-paper"/><text x="1020" y="321" text-anchor="middle" class="art-small">GAIA · Q&amp;A</text><text x="1020" y="361" text-anchor="middle" class="art-small">공통 관리</text></svg>`,
+      service:`<svg class="artwork" viewBox="0 0 1200 500" role="img" aria-label="EGBIM, TOVA, GAIA에 각각 Q&A 페이지가 있고 문의가 공통 관리페이지로 모이는 구조"><defs><marker id="mini-arrow" markerWidth="12" markerHeight="12" refX="9" refY="6" orient="auto"><path d="M2 2 10 6 2 10" fill="none" stroke="#80dfad" stroke-width="2"/></marker></defs><text x="35" y="58" class="art-label">서비스별 Q&amp;A</text><rect x="30" y="82" width="290" height="83" rx="17" class="art-box"/><text x="92" y="135" class="art-title">EGBIM</text><rect x="230" y="105" width="62" height="40" rx="9" fill="#30445d"/><path d="M242 117h38m-38 12h26" class="art-line"/><rect x="30" y="196" width="290" height="83" rx="17" class="art-box"/><text x="92" y="249" class="art-title">TOVA</text><rect x="230" y="219" width="62" height="40" rx="9" fill="#30445d"/><path d="M242 231h38m-38 12h26" class="art-line"/><rect x="30" y="310" width="290" height="83" rx="17" class="art-box"/><text x="92" y="363" class="art-title">GAIA</text><rect x="230" y="333" width="62" height="40" rx="9" fill="#30445d"/><path d="M242 345h38m-38 12h26" class="art-line"/><path d="M335 123h38v115m-38-1h38m-38 115h38V238m0 0h52" class="art-line-green" marker-end="url(#mini-arrow)"/><rect x="465" y="90" width="690" height="296" rx="22" class="art-box-green"/><text x="810" y="140" text-anchor="middle" class="art-title">통합 관리페이지</text><text x="515" y="189" class="art-small">서비스</text><text x="690" y="189" class="art-small">댓글</text><text x="870" y="189" class="art-small">담당</text><text x="1015" y="189" class="art-small">상태</text><rect x="500" y="205" width="620" height="47" rx="8" fill="#102b25"/><text x="515" y="236" class="art-small">EGBIM</text><text x="690" y="236" class="art-small">확인</text><text x="870" y="236" class="art-small">담당자</text><text x="1015" y="236" class="art-small">처리 중</text><rect x="500" y="260" width="620" height="47" rx="8" fill="#102b25"/><text x="515" y="291" class="art-small">TOVA</text><text x="690" y="291" class="art-small">답변</text><text x="870" y="291" class="art-small">담당자</text><text x="1015" y="291" class="art-small">완료</text><rect x="500" y="315" width="620" height="47" rx="8" fill="#102b25"/><text x="515" y="346" class="art-small">GAIA</text><text x="690" y="346" class="art-small">이슈</text><text x="870" y="346" class="art-small">개발자</text><text x="1015" y="346" class="art-small">연결</text></svg>`,
+      forms:`<svg class="artwork" viewBox="0 0 1200 500" role="img" aria-label="총무 물품, 도서, 차량 신청은 업무별로 필요한 입력 항목이 다르고 이후 승인과 처리로 이어지는 예시"><defs><marker id="mini-arrow" markerWidth="12" markerHeight="12" refX="9" refY="6" orient="auto"><path d="M2 2 10 6 2 10" fill="none" stroke="#80dfad" stroke-width="2"/></marker></defs><rect x="25" y="75" width="340" height="235" rx="20" class="art-box"/><text x="195" y="125" text-anchor="middle" class="art-title">물품</text><rect x="60" y="150" width="270" height="52" rx="10" class="art-paper"/><text x="195" y="184" text-anchor="middle" class="art-small">품목 · 수량</text><rect x="60" y="220" width="270" height="52" rx="10" class="art-paper"/><text x="195" y="254" text-anchor="middle" class="art-small">사용 목적</text><rect x="430" y="75" width="340" height="235" rx="20" class="art-box"/><text x="600" y="125" text-anchor="middle" class="art-title">도서</text><rect x="465" y="150" width="270" height="52" rx="10" class="art-paper"/><text x="600" y="184" text-anchor="middle" class="art-small">도서명 · 저자</text><rect x="465" y="220" width="270" height="52" rx="10" class="art-paper"/><text x="600" y="254" text-anchor="middle" class="art-small">신청 이유</text><rect x="835" y="75" width="340" height="235" rx="20" class="art-box"/><text x="1005" y="125" text-anchor="middle" class="art-title">차량</text><rect x="870" y="150" width="270" height="52" rx="10" class="art-paper"/><text x="1005" y="184" text-anchor="middle" class="art-small">일정 · 목적지</text><rect x="870" y="220" width="270" height="52" rx="10" class="art-paper"/><text x="1005" y="254" text-anchor="middle" class="art-small">인원 · 목적</text><path d="M195 326v38m405-38v38m405-38v38m-810 0h810" class="art-line"/><path d="M600 364v28" class="art-line-green" marker-end="url(#mini-arrow)"/><rect x="270" y="408" width="660" height="62" rx="17" class="art-box-green"/><text x="600" y="448" text-anchor="middle" class="art-title">승인 → 담당자 → 처리 완료</text></svg>`,
+      integrate:`<svg class="artwork" viewBox="0 0 1200 500" role="img" aria-label="서비스 Q&A, 총무, 인트라넷 창구를 하나의 관리페이지로 모으는 확장 예시"><defs><marker id="mini-arrow" markerWidth="12" markerHeight="12" refX="9" refY="6" orient="auto"><path d="M2 2 10 6 2 10" fill="none" stroke="#80dfad" stroke-width="2"/></marker></defs><text x="30" y="58" class="art-label">업무별 Q&amp;A</text><rect x="25" y="80" width="325" height="78" rx="16" class="art-box"/><text x="187" y="130" text-anchor="middle" class="art-title">서비스 Q&amp;A</text><rect x="25" y="191" width="325" height="78" rx="16" class="art-box"/><text x="187" y="241" text-anchor="middle" class="art-title">총무 Q&amp;A</text><rect x="25" y="302" width="325" height="78" rx="16" class="art-box"/><text x="187" y="352" text-anchor="middle" class="art-title">인트라넷 Q&amp;A</text><path d="M365 119h35v119m-35-8h35m-35 147h35V238m0 0h45" class="art-line-green" marker-end="url(#mini-arrow)"/><rect x="450" y="80" width="700" height="300" rx="22" class="art-box-green"/><text x="800" y="132" text-anchor="middle" class="art-title">통합 관리페이지</text><text x="510" y="184" class="art-small">문의 종류</text><text x="770" y="184" class="art-small">담당자</text><text x="970" y="184" class="art-small">상태</text><rect x="490" y="199" width="620" height="47" rx="8" fill="#102b25"/><text x="510" y="230" class="art-small">서비스</text><text x="770" y="230" class="art-small">서비스 담당</text><text x="970" y="230" class="art-small">답변</text><rect x="490" y="253" width="620" height="47" rx="8" fill="#102b25"/><text x="510" y="284" class="art-small">총무</text><text x="770" y="284" class="art-small">총무 담당</text><text x="970" y="284" class="art-small">승인</text><rect x="490" y="307" width="620" height="47" rx="8" fill="#102b25"/><text x="510" y="338" class="art-small">인트라넷</text><text x="770" y="338" class="art-small">IT 담당</text><text x="970" y="338" class="art-small">처리</text><text x="800" y="432" text-anchor="middle" class="art-small">창구는 업무별 · 관리는 한곳</text></svg>`,
+      impact:`<svg class="artwork" viewBox="0 0 1200 500" role="img" aria-label="분산된 문의를 한곳에서 담당자와 처리 상태까지 확인하는 개선 효과"><defs><marker id="mini-arrow" markerWidth="12" markerHeight="12" refX="9" refY="6" orient="auto"><path d="M2 2 10 6 2 10" fill="none" stroke="#80dfad" stroke-width="2"/></marker></defs><text x="40" y="62" class="art-label">기존 · 분산</text><rect x="25" y="84" width="470" height="328" rx="22" class="art-box"/><rect x="60" y="130" width="180" height="95" rx="14" class="art-paper"/><text x="150" y="187" text-anchor="middle" class="art-small">게시판</text><rect x="280" y="130" width="180" height="95" rx="14" class="art-paper"/><text x="370" y="187" text-anchor="middle" class="art-small">메일</text><rect x="170" y="275" width="180" height="95" rx="14" class="art-paper"/><text x="260" y="332" text-anchor="middle" class="art-small">메신저</text><path d="M250 225 195 268m125-43 42 43m-112 0v-28" stroke="#d8aa66" stroke-width="4" stroke-dasharray="7 9"/><path d="M520 248h85" class="art-line-green" marker-end="url(#mini-arrow)"/><text x="655" y="62" class="art-label">통합 · 한눈에</text><rect x="640" y="84" width="535" height="328" rx="22" class="art-box-green"/><text x="907" y="130" text-anchor="middle" class="art-title">관리페이지</text><text x="690" y="173" class="art-small">문의</text><text x="865" y="173" class="art-small">담당</text><text x="1015" y="173" class="art-small">상태</text><rect x="675" y="188" width="465" height="54" rx="9" fill="#102b25"/><path d="M700 208h100m-100 15h72" class="art-line"/><text x="865" y="222" class="art-small">운영</text><rect x="990" y="199" width="130" height="32" rx="14" fill="#315b45"/><text x="1055" y="222" text-anchor="middle" class="art-micro">답변</text><rect x="675" y="251" width="465" height="54" rx="9" fill="#102b25"/><path d="M700 271h100m-100 15h72" class="art-line"/><text x="865" y="285" class="art-small">개발</text><rect x="990" y="262" width="130" height="32" rx="14" fill="#645436"/><text x="1055" y="285" text-anchor="middle" class="art-micro">이슈 연결</text><rect x="675" y="314" width="465" height="54" rx="9" fill="#102b25"/><path d="M700 334h100m-100 15h72" class="art-line"/><text x="865" y="348" class="art-small">총무</text><rect x="990" y="325" width="130" height="32" rx="14" fill="#315570"/><text x="1055" y="348" text-anchor="middle" class="art-micro">처리 중</text></svg>`
+    };
+    function makeArtwork(type){const wrap=document.createElement('div');wrap.className='artwork-wrap';wrap.dataset.art=type;wrap.innerHTML=artwork[type]||'';return wrap}
     function makeCard(data){const div=document.createElement('div');div.className='card '+(data[2]||'');const strong=document.createElement('strong');strong.textContent=data[0];const p=document.createElement('p');p.textContent=data[1];div.append(strong,p);return div}
     function makeFlow(s){
       const list=document.createElement('ol');list.className='flow'+(s.flow.length>4?' detailed':'');list.setAttribute('aria-label','왼쪽에서 오른쪽으로 이어지는 처리 흐름');
@@ -254,15 +425,42 @@
       $('visual').replaceChildren(list);
       if(s.branch){const branch=document.createElement('div');branch.className='flow-branch';branch.textContent=s.branch;$('visual').append(branch)}
     }
-    function render(){const s=slides[page];$('stage').classList.toggle('diagram',Boolean(s.flow||s.systemMap));$('chapter').textContent=s.chapter;$('title').textContent=s.title;$('title').style.whiteSpace=(s.flow||s.systemMap)?'normal':'pre-line';$('lead').textContent=s.lead;$('ref-title').textContent=s.ref;$('points').replaceChildren(...s.points.map(t=>{const d=document.createElement('div');d.className='point';d.textContent=t;return d}));const cards=s.cards.map(makeCard);if(s.rows){const row=document.createElement('div');row.className='row';row.append(...cards);$('visual').replaceChildren(row)}else $('visual').replaceChildren(...cards);if(s.flow)makeFlow(s);if(s.systemMap)makeSystemMap();$('status').textContent=s.status||'';$('source').textContent='문서 근거: '+s.source;$('page').textContent=String(page+1).padStart(2,'0')+' / '+slides.length;$('counter').textContent=(page+1)+' / '+slides.length;$('prev').disabled=page===0;$('next').disabled=page===slides.length-1;$('announce').textContent=(page+1)+'번 슬라이드. '+s.title;history.replaceState(null,'','#'+(page+1));}
-    function move(n){page=Math.max(0,Math.min(slides.length-1,page+n));render()}
-    function mode(){wide=!wide;$('stage').classList.toggle('wide',wide);$('mode').textContent=wide?'분할 보기 · S':'전체 폭 · S';$('mode').setAttribute('aria-pressed',String(wide))}
+    function render(){const s=slides[page];$('stage').classList.toggle('diagram',Boolean(s.flow||s.systemMap));$('stage').classList.toggle('with-art',Boolean(s.art));$('chapter').textContent=s.chapter;$('title').textContent=s.title;$('title').style.whiteSpace=(s.flow||s.systemMap)?'normal':'pre-line';$('lead').textContent=s.lead;$('ref-title').textContent=s.ref;$('points').replaceChildren(...s.points.map(t=>{const d=document.createElement('div');d.className='point';d.textContent=t;return d}));$('visual').classList.toggle('has-art',Boolean(s.art));if(s.art){$('visual').replaceChildren(makeArtwork(s.art))}else{const cards=s.cards.map(makeCard);if(s.rows){const row=document.createElement('div');row.className='row';row.append(...cards);$('visual').replaceChildren(row)}else $('visual').replaceChildren(...cards);if(s.flow)makeFlow(s)}$('status').textContent=s.status||'';$('source').textContent='문서 근거: '+s.source;$('page').textContent=String(page+1).padStart(2,'0')+' / '+slides.length;$('counter').textContent=(page+1)+' / '+slides.length;$('prev').disabled=page===0;$('next').disabled=page===slides.length-1;$('announce').textContent=(page+1)+'번 슬라이드. '+s.title;if(location.protocol!=='file:'){try{history.replaceState(null,'','#'+(page+1))}catch{}}}
+    function setPage(next){page=Math.max(0,Math.min(slides.length-1,next));render()}
+    function move(n){setPage(page+n)}
     async function fullscreen(){try{if(document.fullscreenElement)await document.exitFullscreen();else await document.documentElement.requestFullscreen()}catch{$('announce').textContent='브라우저 전체 화면 버튼을 사용해 주세요.'}}
-    function resize(){const scale=Math.min(innerWidth/2560,Math.max(1,innerHeight-90)/720);$('stage').style.transform='translate(-50%,-50%) scale('+scale+')'}
-    $('prev').onclick=()=>move(-1);$('next').onclick=()=>move(1);$('mode').onclick=mode;$('fullscreen').onclick=fullscreen;
-    addEventListener('keydown',e=>{if(e.altKey||e.ctrlKey||e.metaKey)return;if(e.key==='ArrowRight'||e.key==='PageDown'){e.preventDefault();move(1)}else if(e.key==='ArrowLeft'||e.key==='PageUp'){e.preventDefault();move(-1)}else if(e.key.toLowerCase()==='s')mode();else if(e.key.toLowerCase()==='f')fullscreen()});
-    $('cover-start').onclick=()=>{$('cover').hidden=true;$('stage').hidden=false;document.querySelector('.toolbar').hidden=false;document.querySelector('.mode-hint').hidden=false;resize();$('next').focus()};
-    addEventListener('resize',resize);addEventListener('hashchange',()=>{page=Math.max(0,Math.min(slides.length-1,(parseInt(location.hash.slice(1),10)||1)-1));render()});render();resize();
+    function resize(){const reserved=displayMode==='visual'||document.fullscreenElement?0:90;const scale=Math.min(innerWidth/1280,Math.max(1,innerHeight-reserved)/720);$('stage').style.transform='translate(-50%,-50%) scale('+scale+')'}
+    function showVisual(){
+      if(displayMode==='visual')return;
+      if(visualWindow&&!visualWindow.closed){visualWindow.postMessage({type:'qna-index3-show-visual',page},'*');visualWindow.focus();return}
+      if(!('getScreenDetails'in window)){$('mode-hint').textContent='자동 모니터 배치는 HTTPS 페이지와 Chrome 다중 화면 권한이 필요합니다';return}
+      let detailsPromise;
+      try{detailsPromise=window.getScreenDetails().catch(()=>null)}catch{$('mode-hint').textContent='Chrome에서 화면 배치 권한을 사용할 수 없습니다';return}
+      const url=new URL(location.href);url.searchParams.set('display','visual');url.hash=String(page+1);
+      visualWindow=window.open(url.href,'qna-index3-visual','popup,width=1280,height=800');
+      if(!visualWindow){$('mode-hint').textContent='참고 화면 팝업이 차단됨 · 브라우저에서 팝업 허용 후 텍스트를 다시 클릭';return}
+      visualWindow.focus();
+      detailsPromise.then(details=>{
+        if(!visualWindow||visualWindow.closed)return;
+        if(!details){visualWindow.close();visualWindow=null;$('mode-hint').textContent='모니터 배치가 허용되지 않음 · Chrome의 화면 관리 권한을 허용해 주세요';return}
+        const current=details.currentScreen;
+        const other=details.screens.filter(s=>s!==current);
+        const target=other.filter(s=>s.left>=current.left+current.width).sort((a,b)=>a.left-b.left)[0]||other[0];
+        if(!target){visualWindow.close();visualWindow=null;$('mode-hint').textContent='다른 모니터를 찾지 못해 참고 화면을 열지 않았습니다';return}
+        try{visualWindow.moveTo(target.availLeft??target.left,target.availTop??target.top);visualWindow.resizeTo(target.availWidth||target.width,target.availHeight||target.height);visualWindow.focus()}
+        catch{$('mode-hint').textContent='참고 창을 오른쪽 모니터로 옮길 수 없습니다 · 창에서 F를 눌러 전체 화면으로 전환'}
+      });
+    }
+    $('prev').onclick=()=>move(-1);$('next').onclick=()=>move(1);$('fullscreen').onclick=fullscreen;
+    addEventListener('keydown',e=>{if(e.altKey||e.ctrlKey||e.metaKey)return;if(e.key.toLowerCase()==='f'){fullscreen();return}if(displayMode==='visual')return;if(e.key==='ArrowRight'||e.key==='PageDown'){e.preventDefault();move(1)}else if(e.key==='ArrowLeft'||e.key==='PageUp'){e.preventDefault();move(-1)}});
+    function startPresentation(){if(displayMode!=='visual')setPage(0);$('cover').hidden=true;$('stage').hidden=false;if(displayMode!=='visual'){document.querySelector('.toolbar').hidden=false;document.querySelector('.mode-hint').hidden=false;$('next').focus();fullscreen()}resize()}
+    $('cover-start').onclick=startPresentation;
+    $('stage').addEventListener('click',e=>{if(displayMode!=='visual'&&e.target.closest('.narrative'))showVisual()});
+    addEventListener('message',e=>{const data=e.data;if(displayMode==='visual'&&data&&data.type==='qna-index3-show-visual'&&Number.isInteger(data.page))setPage(data.page)});
+    addEventListener('resize',resize);
+    addEventListener('fullscreenchange',resize);
+    addEventListener('hashchange',()=>{const next=Math.max(0,Math.min(slides.length-1,(parseInt(location.hash.slice(1),10)||1)-1));if(next!==page)setPage(next)});
+    render();resize();if(displayMode==='visual')startPresentation();
   </script>
 </body>
 </html>
