@@ -73,6 +73,7 @@
     body.display-visual #stage .artwork-wrap{height:480px;max-height:68vh}
     body.display-visual .toolbar,body.display-visual .mode-hint{display:none!important}
     #stage .mode-hint{z-index:3}
+    body:not(.display-visual) .mode-hint{z-index:10000;max-width:min(720px,calc(100vw - 36px));padding:12px 16px;border:1px solid #53677e;border-radius:10px;background:#111d2a;color:#e4edf7;font-size:16px;line-height:1.5;white-space:normal;box-shadow:0 8px 30px #0008;pointer-events:none}
     @media(max-width:900px){.toolbar{max-width:calc(100vw - 20px);overflow-x:auto}}
   </style>
 </head>
@@ -86,10 +87,10 @@
       <div class="cover-options" id="dual-options">
         <button class="cover-start" id="cover-start">발표 시작 →</button>
       </div>
-      <p class="cover-note" id="cover-note">현재 창에는 발표 글만 표시 · 글을 클릭하면 별도 참고 화면 열기/갱신</p>
+      <p class="cover-note" id="cover-note">발표 시작 시 화면 관리 권한 요청 · 허용 후 글을 클릭하면 오른쪽 참고 화면 표시</p>
     </div>
   </section>
-  <div class="mode-hint" hidden>텍스트를 클릭하면 참고 화면 갱신</div>
+  <div class="mode-hint" id="mode-hint" hidden>텍스트를 클릭하면 참고 화면 갱신</div>
   <main id="stage" aria-label="세미나 슬라이드" hidden>
     <section class="narrative" title="클릭하면 현재 슬라이드의 오른쪽 참고 화면을 표시">
       <div class="eyebrow">Q&A 통합 관리 플랫폼</div>
@@ -380,6 +381,10 @@
     if(displayMode==='visual')document.body.classList.add('display-visual');
     let page=Math.max(0,Math.min(slides.length-1,(parseInt(location.hash.slice(1),10)||1)-1));
     let visualWindow=null;
+    let visualTarget=null;
+    let screenDetailsPromise=null;
+    let screenDetails=null;
+    let screenDetailsResolved=false;
     const artwork={
       platform:`<svg class="artwork" viewBox="0 0 1200 500" role="img" aria-label="EGBIM, TOVA, GAIA 각각의 Q&amp;A 작성페이지를 관리페이지에서 통합 관리하고 담당자 댓글 또는 개발 이슈 연결로 처리하는 흐름">
         <defs><marker id="small-arrow" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto"><path d="M1 1 5 3 1 5" fill="none" stroke="#80dfad" stroke-width="1.2"/></marker></defs>
@@ -430,33 +435,72 @@
     function move(n){setPage(page+n)}
     async function fullscreen(){try{if(document.fullscreenElement)await document.exitFullscreen();else await document.documentElement.requestFullscreen()}catch{$('announce').textContent='브라우저 전체 화면 버튼을 사용해 주세요.'}}
     function resize(){const reserved=displayMode==='visual'||document.fullscreenElement?0:90;const scale=Math.min(innerWidth/1280,Math.max(1,innerHeight-reserved)/720);$('stage').style.transform='translate(-50%,-50%) scale('+scale+')'}
+    function requestScreenDetails(){
+      if(screenDetailsPromise)return screenDetailsPromise;
+      if(!('getScreenDetails'in window)){screenDetailsResolved=true;screenDetailsPromise=Promise.resolve(null);return screenDetailsPromise}
+      try{screenDetailsPromise=window.getScreenDetails().then(details=>{screenDetails=details;screenDetailsResolved=true;return details}).catch(()=>{screenDetailsResolved=true;return null})}catch{screenDetailsResolved=true;screenDetailsPromise=Promise.resolve(null)}
+      return screenDetailsPromise;
+    }
+    function rightScreen(details){const current=details.currentScreen;const screens=details.screens;const currentMatch=screens.find(s=>s.left===current.left&&s.top===current.top)||current;const other=screens.filter(s=>s.left!==currentMatch.left||s.top!==currentMatch.top);return other.filter(s=>s.left>=currentMatch.left+currentMatch.width).sort((a,b)=>a.left-b.left)[0]||null}
+    function screenSummary(details){const current=details.currentScreen;return '현재 화면 ('+current.left+','+current.top+') '+current.width+'×'+current.height+' · 연결 화면 '+details.screens.map((s,i)=>(i+1)+':('+s.left+','+s.top+') '+s.width+'×'+s.height).join(' | ')}
+    function placeVisualWindow(win,target){
+      const x=target.availLeft??target.left;const y=target.availTop??target.top;const w=target.availWidth||target.width;const h=target.availHeight||target.height;
+      $('mode-hint').textContent='창 이동 시도 중 · 목표 좌표 ('+x+','+y+') · 목표 크기 '+w+'×'+h+' · 실제 위치 확인 중';
+      const requestPlacement=()=>{if(!win||win.closed)return;try{win.postMessage({type:'qna-index3-place-window',x,y,width:w,height:h},'*');win.focus()}catch{}};
+      requestPlacement();
+      setTimeout(requestPlacement,250);setTimeout(()=>{requestPlacement();try{win.postMessage({type:'qna-index3-report-position'},'*')}catch{}},800);setTimeout(()=>{try{if(!win.closed)win.postMessage({type:'qna-index3-report-position'},'*')}catch{}},1400);
+      setTimeout(()=>{if(win&&!win.closed)$('mode-hint').textContent='창 위치 확인 응답 대기 중 · 목표 좌표 ('+x+','+y+') · 참고 창이 열린 상태인지 확인해 주세요'},1800);
+    }
     function showVisual(){
       if(displayMode==='visual')return;
-      if(visualWindow&&!visualWindow.closed){visualWindow.postMessage({type:'qna-index3-show-visual',page},'*');visualWindow.focus();return}
-      if(!('getScreenDetails'in window)){$('mode-hint').textContent='자동 모니터 배치는 HTTPS 페이지와 Chrome 다중 화면 권한이 필요합니다';return}
-      let detailsPromise;
-      try{detailsPromise=window.getScreenDetails().catch(()=>null)}catch{$('mode-hint').textContent='Chrome에서 화면 배치 권한을 사용할 수 없습니다';return}
-      const url=new URL(location.href);url.searchParams.set('display','visual');url.hash=String(page+1);
-      visualWindow=window.open(url.href,'qna-index3-visual','popup,width=1280,height=800');
+      $('mode-hint').textContent='텍스트 클릭 감지 · 오른쪽 모니터와 참고 창 상태 확인 중';
+      if(visualWindow&&!visualWindow.closed){
+        visualWindow.postMessage({type:'qna-index3-show-visual',page},'*');
+        const currentTarget=screenDetails&&rightScreen(screenDetails);
+        if(currentTarget){visualTarget=currentTarget;placeVisualWindow(visualWindow,currentTarget);return}
+        requestScreenDetails().then(details=>{
+          if(!details||!visualWindow||visualWindow.closed){$('mode-hint').textContent='화면 배치 정보를 읽지 못했습니다 · Chrome 화면 관리 권한과 연결된 모니터를 확인해 주세요';return}
+          const target=rightScreen(details);
+          if(!target){$('mode-hint').textContent='오른쪽 모니터를 찾지 못했습니다 · '+screenSummary(details);return}
+          visualTarget=target;
+          $('mode-hint').textContent='오른쪽 모니터 확인 · 시작 좌표 ('+target.left+','+target.top+') · 화면 크기 '+target.width+'×'+target.height;
+          placeVisualWindow(visualWindow,target);
+        });
+        return;
+      }
+      if(screenDetailsResolved&&!screenDetails){$('mode-hint').textContent='화면 관리 권한을 허용하지 않았습니다 · Chrome 사이트 권한에서 허용한 뒤 페이지를 새로고침해 주세요';return}
+      const detailsPromise=requestScreenDetails();
+      const url=new URL(location.href);url.searchParams.set('display','visual');url.searchParams.set('windowVersion','20260929-2');url.hash=String(page+1);
+      const target=screenDetails&&rightScreen(screenDetails);
+      if(screenDetailsResolved&&screenDetails&&!target){$('mode-hint').textContent='오른쪽 모니터를 찾지 못했습니다 · '+screenSummary(screenDetails);return}
+      const targetLeft=target?(target.availLeft??target.left):0;
+      const targetTop=target?(target.availTop??target.top):0;
+      const targetWidth=target?(target.availWidth||target.width):1280;
+      const targetHeight=target?(target.availHeight||target.height):800;
+      visualTarget=target;
+      const features='popup,width='+targetWidth+',height='+targetHeight+',left='+targetLeft+',top='+targetTop;
+      visualWindow=window.open(url.href,'qna-index3-visual',features);
       if(!visualWindow){$('mode-hint').textContent='참고 화면 팝업이 차단됨 · 브라우저에서 팝업 허용 후 텍스트를 다시 클릭';return}
       visualWindow.focus();
+      if(target)placeVisualWindow(visualWindow,target);
       detailsPromise.then(details=>{
         if(!visualWindow||visualWindow.closed)return;
         if(!details){visualWindow.close();visualWindow=null;$('mode-hint').textContent='모니터 배치가 허용되지 않음 · Chrome의 화면 관리 권한을 허용해 주세요';return}
-        const current=details.currentScreen;
-        const other=details.screens.filter(s=>s!==current);
-        const target=other.filter(s=>s.left>=current.left+current.width).sort((a,b)=>a.left-b.left)[0]||other[0];
-        if(!target){visualWindow.close();visualWindow=null;$('mode-hint').textContent='다른 모니터를 찾지 못해 참고 화면을 열지 않았습니다';return}
-        try{visualWindow.moveTo(target.availLeft??target.left,target.availTop??target.top);visualWindow.resizeTo(target.availWidth||target.width,target.availHeight||target.height);visualWindow.focus()}
-        catch{$('mode-hint').textContent='참고 창을 오른쪽 모니터로 옮길 수 없습니다 · 창에서 F를 눌러 전체 화면으로 전환'}
+        const target=rightScreen(details);
+        if(!target){visualWindow.close();visualWindow=null;$('mode-hint').textContent='오른쪽 모니터를 찾지 못했습니다 · '+screenSummary(details);return}
+        visualTarget=target;
+        $('mode-hint').textContent='참고 화면을 오른쪽 모니터에 배치 중 · '+(target.availWidth||target.width)+'×'+(target.availHeight||target.height);
+        placeVisualWindow(visualWindow,target);
       });
     }
     $('prev').onclick=()=>move(-1);$('next').onclick=()=>move(1);$('fullscreen').onclick=fullscreen;
     addEventListener('keydown',e=>{if(e.altKey||e.ctrlKey||e.metaKey)return;if(e.key.toLowerCase()==='f'){fullscreen();return}if(displayMode==='visual')return;if(e.key==='ArrowRight'||e.key==='PageDown'){e.preventDefault();move(1)}else if(e.key==='ArrowLeft'||e.key==='PageUp'){e.preventDefault();move(-1)}});
-    function startPresentation(){if(displayMode!=='visual')setPage(0);$('cover').hidden=true;$('stage').hidden=false;if(displayMode!=='visual'){document.querySelector('.toolbar').hidden=false;document.querySelector('.mode-hint').hidden=false;$('next').focus();fullscreen()}resize()}
+    function startPresentation(){if(displayMode!=='visual'){requestScreenDetails();setPage(0)}$('cover').hidden=true;$('stage').hidden=false;if(displayMode!=='visual'){document.querySelector('.toolbar').hidden=false;document.querySelector('.mode-hint').hidden=false;$('next').focus();fullscreen()}resize()}
     $('cover-start').onclick=startPresentation;
-    $('stage').addEventListener('click',e=>{if(displayMode!=='visual'&&e.target.closest('.narrative'))showVisual()});
-    addEventListener('message',e=>{const data=e.data;if(displayMode==='visual'&&data&&data.type==='qna-index3-show-visual'&&Number.isInteger(data.page))setPage(data.page)});
+    $('stage').querySelector('.narrative').addEventListener('click',()=>{if(displayMode!=='visual')showVisual()});
+    addEventListener('message',e=>{const data=e.data;if(displayMode==='visual'&&data&&data.type==='qna-index3-show-visual'&&Number.isInteger(data.page))setPage(data.page);if(displayMode==='visual'&&data&&data.type==='qna-index3-place-window'){try{window.moveTo(data.x,data.y);window.resizeTo(data.width,data.height);setTimeout(reportVisualPosition,100);setTimeout(reportVisualPosition,700)}catch(error){if(window.opener)window.opener.postMessage({type:'qna-index3-placement-error',message:String(error)},'*')}}if(displayMode==='visual'&&data&&data.type==='qna-index3-report-position')reportVisualPosition();if(displayMode!=='visual'&&visualWindow&&e.source===visualWindow&&data&&data.type==='qna-index3-placement-error')$('mode-hint').textContent='참고 창 자체 이동 실패 · '+data.message;if(displayMode!=='visual'&&visualWindow&&e.source===visualWindow&&data&&data.type==='qna-index3-position'){const target=visualTarget;const onTarget=target&&data.x>=(target.availLeft??target.left)-80&&data.x<(target.availLeft??target.left)+(target.availWidth||target.width)&&data.y>=(target.availTop??target.top)-80&&data.y<(target.availTop??target.top)+(target.availHeight||target.height);$('mode-hint').textContent='참고 창 좌표 · 실제 ('+data.x+','+data.y+') · 창 크기 '+data.width+'×'+data.height+(target?' · 목표 모니터 ('+(target.availLeft??target.left)+','+(target.availTop??target.top)+')'+(onTarget?' · 오른쪽 화면에 표시 중':' · 오른쪽 화면 밖'):' · 목표 모니터 확인 중')}});
+    function reportVisualPosition(){if(displayMode==='visual'&&window.opener)window.opener.postMessage({type:'qna-index3-position',x:screenX,y:screenY,width:outerWidth,height:outerHeight},'*')}
+    if(displayMode==='visual'){addEventListener('load',reportVisualPosition);addEventListener('resize',reportVisualPosition);setTimeout(reportVisualPosition,300);setTimeout(reportVisualPosition,1200)}
     addEventListener('resize',resize);
     addEventListener('fullscreenchange',resize);
     addEventListener('hashchange',()=>{const next=Math.max(0,Math.min(slides.length-1,(parseInt(location.hash.slice(1),10)||1)-1));if(next!==page)setPage(next)});
