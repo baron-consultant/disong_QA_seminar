@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="dark">
+  <title>Q&amp;A 시연 영상</title>
+  <style>
+    *{box-sizing:border-box}
+    html,body{width:100%;height:100%;margin:0;background:#05080d;color:#edf2f7;font-family:"Pretendard","Malgun Gothic",sans-serif;overflow:hidden}
+    main{position:fixed;inset:0;display:grid;place-items:center;background:#05080d}
+    video{display:block;width:100%;height:100%;object-fit:contain;background:#05080d}
+    .play{position:fixed;left:50%;top:50%;transform:translate(-50%,-50%);display:flex;align-items:center;gap:16px;padding:22px 34px;border:2px solid #80dfad;border-radius:999px;background:#102b25ed;color:#c8f7dc;font-size:clamp(20px,2vw,36px);font-weight:700;cursor:pointer;box-shadow:0 10px 40px #000a}
+    .play:hover{background:#194535}.play[hidden]{display:none}
+    .message{position:fixed;left:50%;top:24px;transform:translateX(-50%);padding:12px 18px;border:1px solid #435873;border-radius:10px;background:#101a27;color:#c4d1e0;font-size:16px}
+  </style>
+</head>
+<body>
+  <main aria-label="Q&A 플랫폼 시연 영상">
+    <video id="demo" controls preload="metadata" playsinline aria-label="Q&A 플랫폼 시연 영상"></video>
+  </main>
+  <button class="play" id="play" type="button"><span aria-hidden="true">▶</span> 영상 재생</button>
+  <div class="message" id="message" hidden></div>
+  <script>
+    const video=document.getElementById('demo');
+    const playButton=document.getElementById('play');
+    const message=document.getElementById('message');
+    const source=new URLSearchParams(location.search).get('src');
+    if(source){video.src=source}else{message.hidden=false;message.textContent='영상 파일을 찾을 수 없습니다.'}
+    playButton.addEventListener('click',()=>{
+      video.play().catch(()=>{message.hidden=false;message.textContent='재생할 수 없습니다. 영상 파일 경로를 확인해 주세요.'});
+      if(document.fullscreenEnabled){document.documentElement.requestFullscreen().catch(()=>{})}
+      playButton.hidden=true;
+    });
+    video.addEventListener('play',()=>{playButton.hidden=true;message.hidden=true});
+    video.addEventListener('ended',()=>{playButton.hidden=false});
+    video.addEventListener('error',()=>{message.hidden=false;message.textContent='영상을 불러오지 못했습니다. 페이지와 영상 파일이 함께 배포됐는지 확인해 주세요.';playButton.hidden=true});
+    document.addEventListener('fullscreenchange',()=>{if(document.fullscreenElement)message.hidden=true});
+  </script>
+</body>
+</html>
