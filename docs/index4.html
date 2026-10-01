@@ -57,7 +57,7 @@
     @media print{body{overflow:visible;background:white}#stage{position:static;transform:none!important;width:100%;height:auto;min-height:720px}.toolbar,.mode-hint{display:none}}
   
     [hidden]{display:none!important}
-    .cover-screen{position:fixed;inset:0;z-index:10;display:flex;align-items:center;justify-content:center;padding:8vw;background:radial-gradient(ellipse at 82% 22%,#194735 0,transparent 31%),radial-gradient(ellipse at 8% 95%,#203454 0,transparent 36%),linear-gradient(135deg,#0a101a,#111d2a 64%,#0b141e)}
+    .cover-screen{position:fixed;inset:0;z-index:10;display:flex;align-items:center;justify-content:center;padding:8vw;background:radial-gradient(ellipse at 82% 22%,#194735 0,transparent 31%),radial-gradient(ellipse at 8% 95%,#203454 0,transparent 36%),linear-gradient(135deg,#0a101a,#111d2a 64%,#0b141e);cursor:pointer}
     .cover-screen:before{content:"";position:absolute;width:42vw;height:42vw;max-height:70vh;max-width:70vh;border:1px solid #5bd39244;border-radius:50%;right:10vw;top:9vh;box-shadow:0 0 0 4vw #5bd39208,0 0 0 9vw #5bd39205;pointer-events:none}
     .cover-content{position:relative;width:min(1800px,100%);z-index:1}.cover-kicker{color:#9bf0c0;font-size:clamp(23px,3vw,56px);letter-spacing:.1em;font-weight:700}.cover-title{font-size:clamp(46px,6vw,112px);line-height:1.18;letter-spacing:-.045em;max-width:1450px;margin:34px 0 20px;word-break:keep-all}.cover-subtitle{font-size:clamp(22px,2vw,40px);color:#c1cddd;margin:0 0 54px;word-break:keep-all}.cover-meta{display:flex;align-items:center;gap:22px;color:#a8b8cc;font-size:clamp(18px,1.5vw,30px)}.cover-meta:before{content:"";width:54px;height:2px;background:#77dfa6}.cover-start{display:inline-flex;align-items:center;gap:18px;margin-top:70px;border:1px solid #84e2ad;background:#17392f;color:#c8f7dc;padding:18px 28px;border-radius:999px;font-size:21px;font-weight:700}.cover-start:hover{background:#235741}
     .cover-options{display:flex;flex-wrap:wrap;gap:12px;margin-top:25px}.cover-options .cover-start{margin-top:0;font-size:17px;padding:14px 20px}.cover-options .secondary{border-color:#53677e;background:#1a2636;color:#d4deeb}
@@ -86,10 +86,11 @@
     .cover-title{margin:0 0 68px}.cover-presenter{margin:0;color:#fff;font-size:clamp(29px,calc(1.5vw + 7px),37px);letter-spacing:.02em}.cover-options{justify-content:flex-end}
     .screenshot-figure img.zoomable{cursor:zoom-in}.image-zoom{position:fixed;inset:0;z-index:100000;display:flex;align-items:center;justify-content:center;padding:56px;background:#05080def;cursor:zoom-out}.image-zoom img{display:block;max-width:94vw;max-height:88vh;width:auto;height:auto;object-fit:contain;box-shadow:0 16px 70px #000c;border:1px solid #52647a;border-radius:8px}.image-zoom button{position:absolute;right:28px;top:24px;border:1px solid #52647a;border-radius:8px;padding:10px 16px;background:#192536;color:#edf2f7;font-size:18px;cursor:pointer}
     .screenshot-figure img.video-link{cursor:pointer}.screenshot-figure img.video-link:hover{filter:brightness(1.12)}
+    .inline-video{position:fixed;inset:0;z-index:100001;background:#05080d}.inline-video[hidden]{display:none}.inline-video iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
   </style>
 </head>
 <body>
-  <section id="cover" class="cover-screen" aria-label="발표 표지">
+  <section id="cover" class="cover-screen" role="button" tabindex="0" aria-label="발표 표지 · 클릭하면 시연 영상 열기">
     <div class="cover-content">
       <h1 class="cover-title">흩어진 요청을 한곳으로 :<br>Q&amp;A 통합 플랫폼 구축</h1>
       <p class="cover-presenter">송대일 선임연구원</p>
@@ -118,6 +119,9 @@
       <div class="source" id="source"></div>
     </aside>
   </main>
+  <div class="inline-video" id="inline-video" hidden>
+    <iframe id="inline-video-frame" title="Q&A 시연 영상" allow="autoplay; fullscreen"></iframe>
+  </div>
   <nav class="toolbar" aria-label="발표 조작" hidden>
     <button id="prev" aria-label="이전 슬라이드">←</button>
     <span id="counter"></span>
@@ -132,9 +136,9 @@
     "title": "서비스별 Q&A, 문의와 처리는 한곳에서",
     "lead": "각 서비스에서 받은 문의를 통합 관리페이지에서 확인·답변·개발 요청까지 연결",
     "ref": "문의 접수부터 처리까지 시연",
-    "screenshots": [
+    /*"screenshots": [
       {"src":"total_manage.png","label":"통합 관리 화면 · 클릭하면 시연 영상 열기","videoLink":"Video%20Project%201.mp4"}
-    ],
+    ],*/
     "screenshotFlow": ["서비스별 문의 작성", "한 관리 화면에서 확인", "답변·개발 처리 연결"],
     "cards": [
       [
@@ -229,7 +233,7 @@
     "status": "",
     "source": "Q&A 플랫폼 구축 과정 · 설명 자료"
   },
-  {
+  /*{
     // "chapter": "승 · 접수 다음 단계를 설계",
     "title": "기존 관리 기능을 활용해 개발 시간을 줄이다",
     "lead": "ABC UserFeedback으로 관리 기반을 마련하고, 같은 서버의 작성페이지와 연결",
@@ -260,7 +264,7 @@
     ],
     "status": "",
     "source": "5P_1.png · 5P_2.png · Q&A 플랫폼 구축 자료"
-  },
+  },*/
   {
     // "chapter": "전 · 로그인 적용으로 설계 변화",
     "title": "분리된 작업 환경에 공통 가이드를 세우다",
@@ -378,6 +382,7 @@
   }
 ];
     const $=id=>document.getElementById(id);
+    const demoVideoLink='Video%20Project%201.mp4';
     const displayMode=new URLSearchParams(location.search).get('display');
     if(displayMode==='visual')document.body.classList.add('display-visual');
     const requestedPage=parseInt(location.hash.slice(1),10);
@@ -430,7 +435,7 @@
         if(i&&!s.noScreenshotArrows){const arrow=document.createElement('span');arrow.className='screenshot-arrow';arrow.textContent='→';arrow.setAttribute('aria-hidden','true');row.append(arrow)}
         const figure=document.createElement('figure');figure.className='screenshot-figure';
         const img=document.createElement('img');img.src=item.src;img.alt=item.label;img.loading='eager';
-        if(item.videoLink){img.classList.add('video-link');img.tabIndex=0;img.setAttribute('role','button');img.title='클릭하면 시연 영상 창이 열립니다';const open=()=>openVideoWindow(item.videoLink);img.addEventListener('click',open);img.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();open()}})}
+        if(item.videoLink){img.classList.add('video-link');img.tabIndex=0;img.setAttribute('role','button');img.title='클릭하면 이 참고 화면에서 시연 영상이 열립니다';const open=()=>displayMode==='visual'?openInlineVideo(item.videoLink):openVideoWindow(item.videoLink);img.addEventListener('click',open);img.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();open()}})}
         else if(item.zoom){img.classList.add('zoomable');img.tabIndex=0;img.setAttribute('role','button');img.title='클릭하면 확대';const open=()=>openImageZoom(item.src,item.label);img.addEventListener('click',open);img.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();open()}})}
         const caption=document.createElement('figcaption');caption.textContent=item.label;
         figure.append(img,caption);row.append(figure);
@@ -451,6 +456,11 @@
       const player=window.open(url.href,'qna-demo-video',features);
       if(player){player.focus();setTimeout(()=>{try{player.moveTo(left,top);player.resizeTo(width,height)}catch{}},250)}
     }
+    function openInlineVideo(src){
+      const url=new URL('video-player.html',location.href);url.searchParams.set('src',new URL(src,location.href).href);
+      $('inline-video-frame').src=url.href;$('inline-video').hidden=false;
+    }
+    function closeInlineVideo(){if($('inline-video').hidden)return;$('inline-video').hidden=true;$('inline-video-frame').src='about:blank'}
     function openImageZoom(src,alt){
       const overlay=document.createElement('div');overlay.className='image-zoom';overlay.setAttribute('role','dialog');overlay.setAttribute('aria-label',alt+' 확대 화면');
       const image=document.createElement('img');image.src=src;image.alt=alt;
@@ -486,11 +496,15 @@
       if(s.branch){const branch=document.createElement('div');branch.className='flow-branch';branch.textContent=s.branch;$('visual').append(branch)}
     }
     function render(){const s=slides[page];$('stage').classList.toggle('diagram',Boolean(s.flow||s.systemMap));$('stage').classList.toggle('with-art',Boolean(s.art));$('chapter').textContent=s.chapter||'';$('chapter').hidden=!s.chapter;$('title').textContent=s.title;$('title').style.whiteSpace='nowrap';$('lead').textContent=s.lead||'';$('lead').hidden=Boolean(s.hideLead);const leftDiagram=$('left-diagram');leftDiagram.replaceChildren();leftDiagram.hidden=!s.leftDiagram;if(s.leftDiagram)leftDiagram.append(makeLeftDiagram(s.leftDiagram));const leftArt=$('left-art');leftArt.replaceChildren();leftArt.hidden=!s.leftArt;leftArt.classList.toggle('compact',Boolean(s.leftArtCompact));if(s.leftArt)leftArt.append(makeArtwork(s.leftArt));const leftCards=$('left-cards');leftCards.replaceChildren();leftCards.hidden=!s.leftCards;if(s.leftCards)leftCards.append(...s.leftCards.map(makeCard));$('ref-title').textContent=s.ref;$('points').replaceChildren(...s.points.map(t=>{const d=document.createElement('div');d.className='point';d.textContent=t;return d}));$('visual').classList.toggle('has-art',Boolean(s.art));if(s.screenshots){$('visual').replaceChildren(makeScreenshots(s))}else if(s.art){$('visual').replaceChildren(makeArtwork(s.art))}else{const cards=s.cards.map(makeCard);if(s.rows){const row=document.createElement('div');row.className='row';row.append(...cards);$('visual').replaceChildren(row)}else $('visual').replaceChildren(...cards);if(s.flow)makeFlow(s)}$('status').textContent=s.status||'';$('source').textContent='문서 근거: '+s.source;$('page').textContent=String(displayMode==='visual'?page+1:page+2).padStart(2,'0')+' / '+(slides.length+1);$('counter').textContent=(displayMode==='visual'?page+1:coverVisible?1:page+2)+' / '+(slides.length+1);$('prev').disabled=coverVisible;$('next').disabled=!coverVisible&&page===slides.length-1;$('announce').textContent=(page+1)+'번 슬라이드. '+s.title;if(location.protocol!=='file:'){try{history.replaceState(null,'','#'+(displayMode==='visual'?page+1:coverVisible?1:page+2))}catch{}}}
-    function setPage(next){const previous=page;page=Math.max(0,Math.min(slides.length-1,next));if(visualWindow&&!visualWindow.closed&&(page!==previous||slides[page].noVisual)){visualWindow.close();visualWindow=null}render()}
+    function syncVisualPage(){
+      if(displayMode==='visual'||!visualWindow||visualWindow.closed||slides[page].noVisual)return;
+      visualWindow.postMessage({type:'qna-index3-show-visual',page,showDemoVideo:page===0},'*');
+    }
+    function setPage(next){const previous=page;page=Math.max(0,Math.min(slides.length-1,next));render();if(page!==previous)syncVisualPage()}
     function move(n){
       if(displayMode==='visual'){setPage(page+n);return}
-      if(coverVisible){if(n>0){coverVisible=false;$('cover').hidden=true;$('stage').hidden=false;render();requestScreenDetails()}return}
-      if(page===0&&n<0){if(visualWindow&&!visualWindow.closed)visualWindow.close();visualWindow=null;coverVisible=true;$('cover').hidden=false;$('stage').hidden=true;render();return}
+      if(coverVisible){if(n>0){coverVisible=false;$('cover').hidden=true;$('stage').hidden=false;render()}return}
+      if(page===0&&n<0){coverVisible=true;$('cover').hidden=false;$('stage').hidden=true;render();return}
       setPage(page+n)
     }
     async function fullscreen(){try{if(document.fullscreenElement)await document.exitFullscreen();else await document.documentElement.requestFullscreen()}catch{$('announce').textContent='브라우저 전체 화면 버튼을 사용해 주세요.'}}
@@ -511,11 +525,11 @@
       setTimeout(()=>requestPlacement(false),250);setTimeout(()=>{requestPlacement(false);try{win.postMessage({type:'qna-index3-report-position'},'*')}catch{}},800);setTimeout(()=>{try{if(!win.closed)win.postMessage({type:'qna-index3-report-position'},'*')}catch{}},1400);
       setTimeout(()=>{if(win&&!win.closed)$('mode-hint').textContent='창 위치 확인 응답 대기 중 · 목표 좌표 ('+x+','+y+') · 참고 창이 열린 상태인지 확인해 주세요'},1800);
     }
-    function showVisual(){
-      if(displayMode==='visual'||coverVisible||slides[page].noVisual)return;
+    function showVisual(showDemoVideo=page===0,allowCover=false){
+      if(displayMode==='visual'||(coverVisible&&!allowCover)||slides[page].noVisual)return;
       $('mode-hint').textContent='텍스트 클릭 감지 · 오른쪽 모니터와 참고 창 상태 확인 중';
       if(visualWindow&&!visualWindow.closed){
-        visualWindow.postMessage({type:'qna-index3-show-visual',page},'*');
+        visualWindow.postMessage({type:'qna-index3-show-visual',page,showDemoVideo},'*');
         const currentTarget=screenDetails&&rightScreen(screenDetails);
         if(currentTarget){visualTarget=currentTarget;placeVisualWindow(visualWindow,currentTarget);return}
         requestScreenDetails().then(details=>{
@@ -528,9 +542,9 @@
         });
         return;
       }
-      if(screenDetailsResolved&&!screenDetails){$('mode-hint').textContent='화면 관리 권한을 허용하지 않았습니다 · Chrome 사이트 권한에서 허용한 뒤 페이지를 새로고침해 주세요';return}
       const detailsPromise=requestScreenDetails();
-      const url=new URL(location.href);url.searchParams.set('display','visual');url.searchParams.set('windowVersion','20260929-2');url.hash=String(page+1);
+      const url=new URL(location.href);url.searchParams.set('display','visual');url.searchParams.set('windowVersion','20261001-2');url.hash=String(page+1);
+      if(showDemoVideo)url.searchParams.set('showDemoVideo','1');
       const target=screenDetails&&rightScreen(screenDetails);
       if(screenDetailsResolved&&screenDetails&&!target){$('mode-hint').textContent='오른쪽 모니터를 찾지 못했습니다 · '+screenSummary(screenDetails);return}
       const targetLeft=target?target.left:0;
@@ -540,25 +554,31 @@
       visualTarget=target;
       const features='popup,width='+targetWidth+',height='+targetHeight+',left='+targetLeft+',top='+targetTop;
       visualWindow=window.open(url.href,visualWindowName,features);
-      if(!visualWindow){$('mode-hint').textContent='참고 화면 팝업이 차단됨 · 브라우저에서 팝업 허용 후 텍스트를 다시 클릭';return}
+      if(!visualWindow){$('mode-hint').textContent='참고 화면 팝업이 차단됨 · 팝업 허용 후 텍스트 영역을 다시 클릭해 주세요';return}
       visualWindow.focus();
       if(target)placeVisualWindow(visualWindow,target);
       detailsPromise.then(details=>{
         if(!visualWindow||visualWindow.closed)return;
-        if(!details){visualWindow.close();visualWindow=null;$('mode-hint').textContent='모니터 배치가 허용되지 않음 · Chrome의 화면 관리 권한을 허용해 주세요';return}
+        if(!details){$('mode-hint').textContent='참고 창은 열려 있습니다 · 오른쪽 모니터 배치를 위해 화면 관리 권한을 허용해 주세요';return}
         const target=rightScreen(details);
-        if(!target){visualWindow.close();visualWindow=null;$('mode-hint').textContent='오른쪽 모니터를 찾지 못했습니다 · '+screenSummary(details);return}
+        if(!target){$('mode-hint').textContent='참고 창은 열려 있습니다 · 오른쪽 모니터를 찾지 못했습니다 · '+screenSummary(details);return}
         visualTarget=target;
         $('mode-hint').textContent='오른쪽 모니터 전체 화면 요청 · '+target.width+'×'+target.height+' CSS 픽셀';
         placeVisualWindow(visualWindow,target);
       });
     }
     $('prev').onclick=()=>move(-1);$('next').onclick=()=>move(1);$('fullscreen').onclick=fullscreen;
-    addEventListener('keydown',e=>{if(e.altKey||e.ctrlKey||e.metaKey)return;if(e.key.toLowerCase()==='f'){fullscreen();return}if(displayMode==='visual')return;if(e.key==='ArrowRight'||e.key==='PageDown'){e.preventDefault();move(1)}else if(e.key==='ArrowLeft'||e.key==='PageUp'){e.preventDefault();move(-1)}});
+    $('cover').addEventListener('click',()=>showVisual(true,true));
+    $('cover').addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();showVisual(true,true)}});
+    addEventListener('keydown',e=>{if(e.altKey||e.ctrlKey||e.metaKey)return;if(e.key==='Escape'&&displayMode==='visual'&&!$('inline-video').hidden){closeInlineVideo();return}if(e.key.toLowerCase()==='f'){fullscreen();return}if(displayMode==='visual')return;if(e.key==='ArrowRight'||e.key==='PageDown'){e.preventDefault();move(1)}else if(e.key==='ArrowLeft'||e.key==='PageUp'){e.preventDefault();move(-1)}});
     $('stage').querySelector('.narrative').addEventListener('click',()=>{if(displayMode!=='visual')showVisual()});
     addEventListener('message',e=>{
       const data=e.data;
-      if(displayMode==='visual'&&data&&data.type==='qna-index3-show-visual'&&Number.isInteger(data.page))setPage(data.page);
+      if(data&&data.type==='qna-inline-video-close')closeInlineVideo();
+      if(displayMode==='visual'&&data&&data.type==='qna-index3-show-visual'&&Number.isInteger(data.page)){
+        const introVideoAlreadyOpen=data.page===0&&!$('inline-video').hidden;
+        if(!introVideoAlreadyOpen){closeInlineVideo();setPage(data.page);if(data.showDemoVideo)openInlineVideo(demoVideoLink)}
+      }
       if(displayMode==='visual'&&data&&data.type==='qna-index3-place-window'){
         try{
           window.moveTo(data.x,data.y);window.resizeTo(data.width,data.height);
@@ -567,6 +587,7 @@
         }catch(error){if(window.opener)window.opener.postMessage({type:'qna-index3-placement-error',message:String(error)},'*')}
       }
       if(displayMode==='visual'&&data&&data.type==='qna-index3-report-position')reportVisualPosition();
+      if(displayMode!=='visual'&&visualWindow&&e.source===visualWindow&&data&&data.type==='qna-index3-ready')syncVisualPage();
       if(displayMode!=='visual'&&visualWindow&&e.source===visualWindow&&data&&data.type==='qna-index3-placement-error')$('mode-hint').textContent='참고 창 이동 실패 · '+data.message;
       if(displayMode!=='visual'&&visualWindow&&e.source===visualWindow&&data&&data.type==='qna-index3-fullscreen-error')$('mode-hint').textContent='전체 화면 요청 실패 · '+data.message+' · 창에서 F 키를 눌러 주세요';
       if(displayMode!=='visual'&&visualWindow&&e.source===visualWindow&&data&&data.type==='qna-index3-position'){
@@ -576,12 +597,12 @@
       }
     });
     function reportVisualPosition(){if(displayMode==='visual'&&window.opener)window.opener.postMessage({type:'qna-index3-position',x:screenX,y:screenY,width:outerWidth,height:outerHeight,fullscreen:Boolean(document.fullscreenElement),physicalWidth:Math.round(screen.width*devicePixelRatio),physicalHeight:Math.round(screen.height*devicePixelRatio)},'*')}
-    if(displayMode==='visual'){addEventListener('load',reportVisualPosition);addEventListener('resize',reportVisualPosition);setTimeout(reportVisualPosition,300);setTimeout(reportVisualPosition,1200)}
+    if(displayMode==='visual'){addEventListener('load',()=>{reportVisualPosition();if(window.opener)window.opener.postMessage({type:'qna-index3-ready'},'*')});addEventListener('resize',reportVisualPosition);setTimeout(reportVisualPosition,300);setTimeout(reportVisualPosition,1200)}
     addEventListener('resize',resize);
     addEventListener('fullscreenchange',resize);
     addEventListener('hashchange',()=>{const hashPage=parseInt(location.hash.slice(1),10)||1;if(displayMode==='visual'){const next=Math.max(0,Math.min(slides.length-1,hashPage-1));if(next!==page)setPage(next)}else if(hashPage===1){if(!coverVisible)move(-1)}else{const next=Math.max(0,Math.min(slides.length-1,hashPage-2));if(coverVisible){coverVisible=false;$('cover').hidden=true;$('stage').hidden=false;render()}if(next!==page)setPage(next)}});
     render();resize();
-    if(displayMode==='visual'){requestScreenDetails();document.getElementById('cover').hidden=true;document.getElementById('stage').hidden=false}
+    if(displayMode==='visual'){requestScreenDetails();document.getElementById('cover').hidden=true;document.getElementById('stage').hidden=false;if(new URLSearchParams(location.search).get('showDemoVideo')==='1'&&page===0)openInlineVideo(demoVideoLink)}
     else{document.getElementById('cover').hidden=!coverVisible;document.getElementById('stage').hidden=coverVisible;document.querySelector('.toolbar').hidden=false}
   </script>
 </body>
